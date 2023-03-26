@@ -10,6 +10,9 @@ import br.com.miniautorizador.validator.ValidadorDeTransacao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 @Service
 public class TransacaoService {
 
@@ -22,7 +25,7 @@ public class TransacaoService {
     @Autowired
     private ValidadorDeTransacao validadorDeTransacao;
 
-    public void realizarTransacao(Transacao transacao) {
+    private void realizar(Transacao transacao) {
         Cartao cartao = buscaCartao(transacao.getNumeroCartao());
 
         validadorDeTransacao.validar(cartao, transacao);
@@ -41,5 +44,11 @@ public class TransacaoService {
     public Cartao buscaCartao (String numeroCartao){
         return cartaoRepository.findByNumeroCartao(numeroCartao)
                 .orElseThrow(() -> new TransacaoException(Errors.CARTAO_INEXISTENTE.getValue()));
+    }
+
+    public void realizarTransacao(Transacao transacao) {
+        synchronized (this) {
+            realizar(transacao);
+        }
     }
 }

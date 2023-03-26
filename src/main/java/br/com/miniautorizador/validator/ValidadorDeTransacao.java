@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 public class ValidadorDeTransacao {
 
-    private List<Validador> validadores;
+    private final List<Validador> validadores;
 
     public ValidadorDeTransacao() {
         this.validadores = Arrays.asList(new ValidadorDeSenhaImpl(), new ValidadorDeSaldoImpl());
