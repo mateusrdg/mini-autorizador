@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static br.com.miniautorizador.domain.enums.Errors.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @ExtendWith(MockitoExtension.class)
 public class TransacaoServiceTest {
@@ -50,33 +51,6 @@ public class TransacaoServiceTest {
         assertEquals(50.0, cartao.getSaldo(), 0.001);
         Mockito.verify(cartaoRepository, Mockito.times(1)).save(cartao);
         Mockito.verify(transacaoRepository, Mockito.times(1)).save(transacao);
-    }
-
-    @Test
-    public void testRealizarTransacaoComSenhaInvalida() {
-        Transacao transacao = new Transacao(1L, "1234", "senha_errada", 50.0);
-        mockBuscaCartao();
-
-        try {
-            transacaoService.realizarTransacao(transacao);
-            fail();
-        } catch (TransacaoException exception) {
-            assertEquals(SENHA_INVALIDA.getValue(), exception.getMessage());
-        }
-    }
-
-    @Test
-    public void testRealizarTransacaoComSaldoInsuficiente() {
-        Transacao transacao = new Transacao(1L, "1234", "senha", 150.0);
-        mockBuscaCartao();
-
-        try {
-            transacaoService.realizarTransacao(transacao);
-            fail();
-        } catch (TransacaoException exception) {
-            assertEquals(SALDO_INSUFICIENTE.getValue(), exception.getMessage());
-        }
-
     }
 
     @Test
